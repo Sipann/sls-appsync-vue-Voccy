@@ -1,0 +1,19 @@
+{
+  "name": "sls-appsync-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "serverless": "^1.58.0"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.581.0",
+    "serverless-appsync-plugin": "^1.1.2"
+  }
+}
