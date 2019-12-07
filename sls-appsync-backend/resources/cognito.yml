@@ -1,0 +1,59 @@
+SNSPolicy:
+  Type: AWS::IAM::ManagedPolicy
+  Properties:
+    Description: Managed policy to allow access to SNS
+    PolicyDocument:
+      Version: "2012-10-17"
+      Statement: 
+        - Effect: Allow
+          Action: sns:publish
+          Resource: "*"
+
+CognitoSNSRole:
+  Type: AWS::IAM::Role
+  Description: An IAM Role to allow Cognito send SNS messages.
+  Properties:
+    RoleName: ${self:custom.base}-cognito-sns-role
+    ManagedPolicyArns:
+      - Ref: SNSPolicy
+    AssumeRolePolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Action:
+            - sts:AssumeRole
+          Principal:
+            Service:
+              - cognito-idp.amazonaws.com
+
+UserPool:
+  Type: AWS::Cognito::UserPool
+  Description: A Cognito UserPool for authenticating users.
+  Properties:
+    UserPoolName: ${self:custom.base}-userpool
+    AutoVerifiedAttributes:
+        - email
+    Schema: 
+      - Name: name
+        AttributeDataType: String
+        Mutable: false
+        Required: true
+      - Name: email
+        AttributeDataType: String
+        Mutable: true
+        Required: true
+    
+
+
+UserPoolClient:
+  Type: AWS::Cognito::UserPoolClient
+  Description: App Client used by AWS AppSync
+  Properties:
+    ClientName: ${self:custom.base}-userpool-client
+    GenerateSecret: false
+    UserPoolId: 
+      Ref: UserPool
+
+
+
+  
