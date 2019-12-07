@@ -1,0 +1,24 @@
+LoggingAppSyncServiceRole:
+  Type: AWS::IAM::Role
+  Properties:
+    RoleName: ${self:custom.base}-logging-role
+    AssumeRolePolicyDocument:
+      Version: "2012-10-17"
+      Statement: 
+        - Effect: Allow
+          Action:
+            - sts:AssumeRole
+          Principal:
+            Service:
+              - appsync.amazonaws.com
+    Policies:
+      - PolicyName: ${self:custom.base}-logging-policy
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: "*"
