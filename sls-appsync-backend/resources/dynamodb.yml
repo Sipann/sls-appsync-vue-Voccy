@@ -1,0 +1,58 @@
+DynamoDBTable:
+  Type: AWS::DynamoDB::Table
+  Description: DynamoDB table for AWS AppSync Vocabulary App
+  Properties:
+    TableName: ${self:custom.db.table.name}
+    AttributeDefinitions:
+      - AttributeName: UserId
+        AttributeType: S
+      - AttributeName: ItemId
+        AttributeType: S
+    KeySchema:
+      - AttributeName: UserId
+        KeyType: HASH
+      - AttributeName: ItemId
+        KeyType: RANGE
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
+
+
+DynamoDBPolicy:
+  Type: AWS::IAM::ManagedPolicy
+  Properties: 
+    Description: Managed policy to give access to the tables created by this template.
+    ManagedPolicyName: ${self:custom.base}-dynamodb-policy
+    PolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Action: 
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:DeleteItem
+            - dynamodb:UpdateItem
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:BatchGetItem
+            - dynamodb:BatchWriteItem
+          Resource: 
+            - "arn:aws:dynamodb:${self:provider.region}:${self:custom.account.id}:table/${self:custom.db.table.name}"
+            - "arn:aws:dynamodb:${self:provider.region}:${self:custom.account.id}:table/${self:custom.db.table.name}/*"
+
+
+DynamoDBRole:
+  Type: AWS::IAM::Role
+  Properties:
+    RoleName: ${self:custom.base}.dynamodb-role 
+    ManagedPolicyArns:
+      - Ref: DynamoDBPolicy
+    AssumeRolePolicyDocument:
+      Version: "2012-10-17"
+      Statement: 
+        - Effect: Allow
+          Action:
+            - sts:AssumeRole
+          Principal:
+            Service:
+              - appsync.amazonaws.com

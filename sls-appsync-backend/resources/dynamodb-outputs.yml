@@ -1,0 +1,12 @@
+dynamodbRoleArn:
+  Value:
+    Fn::GetAtt: [DynamoDBRole, Arn]
+  Export:
+    Name: ${self:custom.base}-DynamoDBRoleArn
+
+dynamoDBTable:
+  Value: 
+    Ref: DynamoDBTable
+  Export:
+    Name: ${self:custom.base}-DynamoDBTable
+
