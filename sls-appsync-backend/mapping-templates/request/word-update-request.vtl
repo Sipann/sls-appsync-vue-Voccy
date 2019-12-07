@@ -1,0 +1,17 @@
+{
+  "version": "2017-02-28",
+  "operation": "UpdateItem",
+  "key": {
+    "UserId": $util.dynamodb.toDynamoDBJson($ctx.identity.sub),
+    "ItemId": $util.dynamodb.toDynamoDBJson($ctx.args.input.ItemId),
+  },
+  "update": {
+    "expression": "SET english = :english, french = :french, category = :category, tag = :tag",
+    "expressionValues": {
+      ":english": $util.dynamodb.toDynamoDBJson($ctx.args.input.english),
+      ":french": $util.dynamodb.toDynamoDBJson($ctx.args.input.french),
+      ":category": $util.dynamodb.toDynamoDBJson($ctx.args.input.category),
+      ":tag": $util.dynamodb.toDynamoDBJson($ctx.args.input.tag)
+    }
+  }
+}

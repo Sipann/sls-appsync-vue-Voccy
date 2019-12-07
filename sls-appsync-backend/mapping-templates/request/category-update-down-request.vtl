@@ -1,0 +1,14 @@
+{
+  "version": "2017-02-28",
+  "operation": "UpdateItem",
+  "key": {
+    "UserId": $util.dynamodb.toDynamoDBJson($ctx.identity.sub),
+    "ItemId": $util.dynamodb.toDynamoDBJson($ctx.args.ItemId),
+  },
+  "update": {
+    "expression": "ADD numbers :minusOne",
+    "expressionValues" : {
+      ":minusOne" : { "N" : -1 }
+    }
+  }
+}

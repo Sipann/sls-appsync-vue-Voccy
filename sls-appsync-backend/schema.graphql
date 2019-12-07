@@ -1,0 +1,83 @@
+type Schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  getWord(ItemId: String): Word
+  getWords(limit: Int, nextToken: String): PaginatedWords!
+  getWordsByCategory(category: String, limit: Int, nextToken: String): PaginatedWords!
+  getWordsByTag(tag: Tag, limit: Int, nextToken: String): PaginatedWords!
+  getWordsByCategoryAndTag(category: String, tag: Tag, limit: Int, nextToken: String): PaginatedWords!
+}
+
+type Mutation {
+  createWord(input: CreateWordInput!): Word
+  deleteWord(input: DeleteWordInput!): Word
+  updateWord(input: UpdateWordInput!): Word
+  createCategory(input: CreateCategoryInput!): Category
+  deleteCategory(input: DeleteCategoryInput!): Category
+  updateCategory(input: UpdateCategoryInput!): Category
+  updateCategoryUp(ItemId: String!): Category
+  updateCategoryDown(ItemId: String!): Category
+}
+
+type PaginatedWords {
+  words: [Word]
+  nextToken: String
+}
+
+type Word {
+  UserId: String!
+  ItemId: String!
+  wordId: String!
+  english: String
+  french: String
+  category: String
+  tag: Tag
+}
+
+type Category {
+  UserId: String!
+  ItemId: String!
+  title: String!
+  numbers: Int
+}
+
+enum Tag {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+input CreateWordInput {
+  english: String
+  french: String
+  category: String
+  tag: Tag
+}
+
+input DeleteWordInput {
+  ItemId: String!
+}
+
+input UpdateWordInput {
+  ItemId: String!
+  english: String
+  french: String
+  category: String
+  tag: Tag
+}
+
+input CreateCategoryInput {
+  title: String!
+}
+
+input DeleteCategoryInput {
+  ItemId: String!
+}
+
+input UpdateCategoryInput {
+  ItemId: String!
+  title: String!
+}

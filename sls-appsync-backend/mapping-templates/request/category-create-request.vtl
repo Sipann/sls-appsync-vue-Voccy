@@ -1,0 +1,15 @@
+#set($id = $util.autoId())
+#set($itemId = "CAT-$id")
+
+{
+  "version": "2017-02-28",
+  "operation": "PutItem",
+  "key": {
+    "UserId": $util.dynamodb.toDynamoDBJson($ctx.identity.sub),
+    "ItemId": $util.dynamodb.toDynamoDBJson($itemId)
+  },
+  "attributeValues": {
+    "title": $util.dynamodb.toDynamoDBJson($ctx.args.input.title),
+    "numbers": { "N": 0 },
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "version": "2017-02-28",
+  "operation": "UpdateItem",
+  "key": {
+    "UserId": $util.dynamodb.toDynamoDBJson($ctx.identity.sub),
+    "ItemId": $util.dynamodb.toDynamoDBJson($ctx.args.input.ItemId),
+  },
+  "update": {
+    "expression": "SET title = :title",
+    "expressionValues": {
+      ":title": $util.dynamodb.toDynamoDBJson($ctx.args.input.title),
+    }
+  }
+}
