@@ -4,6 +4,7 @@ import VueApollo from 'vue-apollo';
 import Amplify, * as AmplifyModules from 'aws-amplify'
 import { AmplifyPlugin } from 'aws-amplify-vue'
 import AWSAppSyncClient from 'aws-appsync';
+import * as localForage from 'localforage';
 
 Amplify.configure({
   Auth : {
@@ -22,8 +23,23 @@ const appsyncClientConfig = {
   auth: {
     type: process.env.VUE_APP_AWS_APPSYNC_AUTH_TYPE,
     jwtToken: async () => (await AmplifyModules.Auth.currentSession()).getIdToken().getJwtToken(),
-  }
+  },
+  disableOffline: false,
+  offlineConfig: {
+    callback: (err, succ) => {
+      if(err) {
+        const { mutation, variables } = err;
+        console.warn(`ERROR for ${mutation}`, `with variables ${variables}`, err);
+      } else {
+        const { mutation, variables } = succ;
+        console.info(`SUCCESS for ${mutation}`, `with variables ${variables}`, succ);
+      }
+    },
+    storage: localForage,
+  },
 };
+
+
 const appsyncClientOptions = {
   defaultOptions: {
     watchQuery: {

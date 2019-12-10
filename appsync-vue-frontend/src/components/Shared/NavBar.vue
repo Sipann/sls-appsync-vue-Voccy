@@ -70,7 +70,8 @@ export default {
       let items = [];
       if (this.signedIn) {
         items= [
-          { icon: 'mdi-account', title: 'Profile', link: '/profile' },
+          { icon: 'mdi-account', title: 'Dashboard', link: '/dashboard' },
+          { icon: 'mdi-account', title: 'List', link: '/list' },
         ];
       } else {
         items = [
@@ -84,7 +85,7 @@ export default {
       let items = [];
       if (this.signedIn) {
         items= [
-          { icon: 'mdi-account', title: 'Profile', link: '/profile' },
+          { icon: 'mdi-account', title: 'Dashboard', link: '/dashboard' },
         ];
       } else {
         items = [

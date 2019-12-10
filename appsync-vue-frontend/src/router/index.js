@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Dashboard from '@/views/Dashboard.vue'
+import ListWords from '@/views/ListWords.vue'
 
 
 Vue.use(VueRouter)
@@ -47,6 +48,12 @@ const routes = [
     path: '/dashboard',
     name: 'dashboard',
     component: Dashboard,
+    meta: { requiresAuth: true, unAuthenticatedOnly: false },
+  },
+  {
+    path: '/list',
+    name: 'list',
+    component: ListWords,
     meta: { requiresAuth: true, unAuthenticatedOnly: false },
   },
   
