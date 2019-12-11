@@ -12,4 +12,4 @@ const UPDATE_WORD = gql`
   }
 `;
 
-export default DELETE_WORD;
+export default UPDATE_WORD;
