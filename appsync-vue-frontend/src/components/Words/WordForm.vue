@@ -1,8 +1,20 @@
 <template>
   <v-container>
-    <v-icon v-if="action === 'editing' && format === 'icon'" @click="dialog = true">mdi-pencil</v-icon>
-    <v-btn v-else-if="action === 'editing'" @click.stop="dialog = true">Edit Word</v-btn>
-    <v-btn v-else color="primary" dark @click.stop="dialog = true">Add New Word</v-btn>
+
+    <v-btn v-if="action === 'editing' && format === 'round'" fab @click.stop="dialog = true">
+      <v-icon dark>mdi-pencil</v-icon>
+    </v-btn>
+    <v-btn v-else-if="action === 'editing' && format !== 'round'" @click.stop="dialog = true">
+      Edit Word
+      <v-icon right dark>mdi-pencil</v-icon>
+    </v-btn>
+    <v-btn v-else-if="action === 'creating' && format === 'round'" @click.stop="dialog = true">
+      <v-icon dark>mdi-plus</v-icon>
+    </v-btn>
+    <v-btn v-else @click.stop="dialog = true">
+      Add New Word
+      <v-icon right dark>mdi-plus</v-icon>
+    </v-btn>
 
     <v-dialog v-model="dialog" max-width="350">
       <v-card>
