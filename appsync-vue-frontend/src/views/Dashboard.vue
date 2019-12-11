@@ -1,7 +1,7 @@
 <template>
   <div>
     DASHBOARD  
-    <CreateWord @create-done="error = $event.error" />
+    <word-form />
 
     <v-snackbar v-model="snackbar" :color="snackColor">
       {{ snackText }}
@@ -12,10 +12,10 @@
 </template>
 
 <script>
-import CreateWord from '@/components/Words/CreateWord';
+import WordForm from '@/components/Words/WordForm';
 
 export default {
-  components: { CreateWord },  
+  components: { WordForm },  
   data: () => ({
     error: false,
     snackbar: false,

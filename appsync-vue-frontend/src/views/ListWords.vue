@@ -3,6 +3,7 @@
     <v-list-item v-for="word in words" :key="word.ItemId">
       <v-list-item-content>
         <v-icon @click="deleteWord(word)">mdi-delete</v-icon>
+        <WordForm action="editing" format="icon" :word="word" />
         <v-list-item-title>{{ word.english }}</v-list-item-title>
         <v-list-item-title>{{ word.french }}</v-list-item-title>
       </v-list-item-content>
@@ -14,7 +15,11 @@
 import GET_WORDS from '@/graphql/queries/getWords';
 import DELETE_WORD from '@/graphql/mutations/deleteWord';
 
+import WordForm from '@/components/Words/WordForm';
+
 export default {
+
+  components: { WordForm, },
 
   methods: {
     async deleteWord(word) {
@@ -40,6 +45,8 @@ export default {
         console.log('deleteWord err', err);
       }
     },
+
+
   },
   
   apollo: {
