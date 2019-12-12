@@ -7,7 +7,8 @@ const GET_WORDS = gql`
         ItemId
         english
         french
-        
+        tag
+        category
       }
       nextToken
     }

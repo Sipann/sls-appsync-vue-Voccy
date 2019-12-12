@@ -11,10 +11,12 @@
 </template>
 
 <script>
-import GET_WORDS from '@/graphql/queries/getWords';
-import DELETE_WORD from '@/graphql/mutations/deleteWord';
+import { apolloDecrementCategory } from '@/graphql/apolloRequests/categories';
+import { apolloDeleteWord } from '@/graphql/apolloRequests/words';
+
 
 export default {
+  name: 'DeleteWord',
 
   props: {
     format: {
@@ -28,30 +30,17 @@ export default {
   },
   
   methods: {
+
     async deleteWord(word) {
       try {
-        this.$apollo.mutate({
-          mutation: DELETE_WORD,
-          variables: { input: { ItemId: word.ItemId } },
-          optimisticResponse: () => ({
-            deleteWord: {
-              __typename: 'Word',
-              ...word
-            }
-          }),
-          update: (cache, { data: { deleteWord } }) => {
-            const query = GET_WORDS;
-            const data = cache.readQuery({ query });
-            data.getWords.words = data.getWords.words.filter(word => word.ItemId !== deleteWord.ItemId);
-            cache.writeQuery({ query, data });
-          },
-        });
-
+        await apolloDeleteWord(word);
+        await apolloDecrementCategory(word.category);        
       } catch (err) {
         console.log('deleteWord err', err);
       }
     },
 
   },
+
 }
 </script>

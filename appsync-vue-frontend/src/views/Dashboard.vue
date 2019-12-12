@@ -1,7 +1,7 @@
 <template>
   <div>
     DASHBOARD  
-    <word-form />
+    <word-form action="creating" :word="{}"/>
 
     <v-snackbar v-model="snackbar" :color="snackColor">
       {{ snackText }}
@@ -15,6 +15,7 @@
 import WordForm from '@/components/Words/WordForm';
 
 export default {
+  name: 'Dashboard',
   components: { WordForm },  
   data: () => ({
     error: false,

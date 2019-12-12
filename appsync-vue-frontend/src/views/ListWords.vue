@@ -18,13 +18,13 @@ import WordForm from '@/components/Words/WordForm';
 import DeleteWord from '@/components/Words/DeleteWord';
 
 export default {
-  name: 'DeleteWord',
+  name: 'ListWords',
   components: { WordForm, DeleteWord, },
 
   data: () => ({
     format: 'round',
   }),
-  
+
   apollo: {
     words: {
       query: () => GET_WORDS,

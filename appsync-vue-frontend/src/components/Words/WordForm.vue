@@ -1,6 +1,7 @@
 <template>
   <v-container>
 
+    <!-- Opening dialog button -->
     <v-btn v-if="action === 'editing' && format === 'round'" fab @click.stop="dialog = true">
       <v-icon dark>mdi-pencil</v-icon>
     </v-btn>
@@ -15,7 +16,9 @@
       Add New Word
       <v-icon right dark>mdi-plus</v-icon>
     </v-btn>
+    <!--  -->
 
+    <!-- Word form dialog -->
     <v-dialog v-model="dialog" max-width="350">
       <v-card>
         <v-card-title>{{ title }}</v-card-title>
@@ -35,12 +38,12 @@
             <v-row>
               <v-col :cols="6">
                 <v-select v-model="category" 
-                  :items="categoriesOptions" 
+                  :items="categoriesAvailable" 
                   :disabled="!categoriesOptions.length"
                   label="Category"></v-select>
               </v-col>
               <v-col>
-                <v-text-field type="text" v-model="newCategory" label="Add New Category" append-icon="mdi-plus" @click:append="addCategoryOption"></v-text-field>
+                <v-text-field type="text" v-model="categoryNew" label="Add New Category" append-icon="mdi-plus" @click:append="addCategoryOption"></v-text-field>
               </v-col>
             </v-row>
 
@@ -50,26 +53,52 @@
               <v-btn type="submit" :disabled="!isFormValid || loading">Save</v-btn>
               <v-btn type="button" @click="dialog = false">Cancel</v-btn>
             </v-row>
-              
           </v-form>
         </v-card-text>
       </v-card>
     </v-dialog>
+    <!--  -->
 
   </v-container>
   
 </template>
 
 <script>
-import GET_WORDS from '@/graphql/queries/getWords';
-import CREATE_WORD from '@/graphql/mutations/createWord';
-import UPDATE_WORD from '@/graphql/mutations/updateWord';
+import GET_CATEGORIES from '@/graphql/queries/getCategories';
 
-import uuidv4 from 'uuid/v4';
+import { 
+  apolloCreateCategory,
+  apolloDecrementCategory, 
+  apolloIncrementCategory, 
+} from '@/graphql/apolloRequests/categories';
+
+import {
+  apolloCreateWord,
+  apolloUpdateWord,
+} from '@/graphql/apolloRequests/words';
+
 
 export default {
+  name: 'WordForm',
 
-  props: ['action', 'format', 'word'],
+  props: {
+    action: {
+      type: String,
+      validator: function (value) {
+        return value ? ['editing', 'creating'].indexOf(value) > -1 : true;
+      },
+    },
+    format: {
+      type: String,
+      validator: function (value) {
+        return value ? ['round'].indexOf(value) > -1 : true; 
+      },
+    },
+    word: {
+      type: Object,
+      required: true,
+    },
+  },
 
   data: () => ({
     // 
@@ -78,17 +107,21 @@ export default {
 
     // 
     category: 'none',
+    categoryNew: '',
     categoriesOptions: [],
     english: '',
     french: '',
     isFormValid: true,
-    newCategory: '',
     tag: '',
     tagOptions: ['LOW', 'MEDIUM', 'HIGH'],
 
   }),
 
   computed: {
+    categoriesAvailable() {
+      return [...this.categoriesOptions.map(cat => cat.title)];
+    },
+
     title() {
       return this.action === 'editing' ? 'Update Word' : 'Save New Word';
     },
@@ -104,114 +137,79 @@ export default {
   },
   
   methods: {
+
     async addCategoryOption() {
       try {
-        console.log('add new category');  
+        await apolloCreateCategory(this.categoryNew);
+        this.category = this.categoryNew;
+        this.categoryNew = '';
       } catch (err) {
-        console.log('err', err);
+        console.log('addCategoryOption err', err);
       }
     },
 
     async updateWord() {
       try {
-        const variables = {
-          input: {
-            ItemId: this.word.ItemId,
-            english: this.english,
-            french: this.french,
-            category: this.category,
-            tag: this.tag
-          }
-        };
+      const initialCategory = this.word.category;
 
-        await this.$apollo.mutate({
-          mutation: UPDATE_WORD,
-          variables,
+      const updatedWord = {
+        ItemId: this.word.ItemId,
+        english: this.english,
+        french: this.french,
+        category: this.category,
+        tag: this.tag
+      }
+      await apolloUpdateWord(updatedWord);
 
-          optimisticResponse: () => ({
-            updateWord: {
-              __typename: 'Word',
-              ...variables.input,
-            }
-          }),
+      if (this.category !== initialCategory) {
+        await apolloIncrementCategory(this.category)
+        if (initialCategory !== 'none') {
+          await apolloDecrementCategory(initialCategory);
+        }
+      }
 
-          update: (cache, { data: { updateWord } }) => {
-            const query = GET_WORDS;
-            const data = cache.readQuery({ query });
-            const index = data.getWords.words.findIndex(word => word.ItemId === updateWord.ItemId);
-            data.getWords.words[index] = updateWord;
-            cache.writeQuery({ query, data });
-          },
-
-        });
-
-        this.dialog = false;
-        this.$emit('word-done', { error: false });
+      this.dialog = false;
+      this.$emit('word-done', { error: false });
 
       } catch (err) {
-        console.log('err', err);
+        console.log('updateWord err', err);
         this.$emit('word-done', { error: true });
       }
     },
 
     async createWord() {
       try {
-        const tempId = 'WORD-' + uuidv4();
-        const variables = {
-          input: {
-            english: this.english,
-            french: this.french,
-            category: this.category,
-            tag: this.tag
-          }
-        };
-        
         const word = {
-          ItemId: tempId,
           english: this.english,
           french: this.french,
           category: this.category,
           tag: this.tag
         };
-
-        await this.$apollo.mutate({
-          mutation: CREATE_WORD,
-          variables,
-
-          optimisticResponse: () => ({
-            createWord: {
-              __typename: 'Word',
-              ...word,
-            }
-          }),
-
-          update: (cache, { data: { createWord } }) => {
-            const query = GET_WORDS;
-            const data = cache.readQuery({ query });
-            data.getWords.words = [
-              ...data.getWords.words.filter(item => item.ItemId !== createWord.ItemId),
-              createWord
-            ];
-            cache.writeQuery({ query, data });
-          },
-
-
-        });
+        await apolloCreateWord(word);
+        await apolloIncrementCategory(this.category);
         this.dialog = false;
         this.$emit('word-done', { error: false });
 
       } catch (err) {
-        console.log('saveWord err', err);
+        console.log('createWord err', err);
         this.$emit('word-done', { error: true });
       }
     },
 
     async saveWord() {
       if (this.action === 'editing') await this.updateWord();
-      else await this.saveWord();
+      else await this.createWord();
     },
 
-
   },
+
+  apollo: {
+    categoriesOptions: {
+      query: () => GET_CATEGORIES,
+      update: data => data.getCategories,
+    },
+  },
+
 }
+
 </script>
