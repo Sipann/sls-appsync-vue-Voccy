@@ -4,6 +4,7 @@ type Schema {
 }
 
 type Query {
+  getCategories: [Category]
   getWord(ItemId: String): Word
   getWords(limit: Int, nextToken: String): PaginatedWords!
   getWordsByCategory(category: String, limit: Int, nextToken: String): PaginatedWords!
@@ -28,7 +29,7 @@ type PaginatedWords {
 }
 
 type Word {
-  UserId: String!
+  # UserId: String!
   ItemId: String!
   wordId: String!
   english: String
@@ -38,7 +39,7 @@ type Word {
 }
 
 type Category {
-  UserId: String!
+  # UserId: String!
   ItemId: String!
   title: String!
   numbers: Int

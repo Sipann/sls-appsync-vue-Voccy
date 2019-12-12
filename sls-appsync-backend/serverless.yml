@@ -77,6 +77,11 @@ custom:
         field: getWordsByCategoryAndTag
         request: "request/words-get-by-category-tag.vtl"
         response: "response/response-to-words-query.vtl"
+      - dataSource: Words
+        type: Query
+        field: getCategories
+        request: "request/categories-get-all.vtl"
+        response: "response/response-to-categories-query.vtl"
       
       - dataSource: Words
         type: Mutation
