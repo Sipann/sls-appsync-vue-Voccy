@@ -10,6 +10,8 @@
 <script>
 import NavBar from '@/components/Shared/NavBar';
 
+import GET_ALL_WORDS from '@/graphql/queries/getAllWords';
+
 export default {
   name: 'App',
 
@@ -22,6 +24,13 @@ export default {
   async mounted() {
     await this.$apollo.provider.defaultClient.hydrated();
     this.hydrated = true;
+
+    const allWords = await this.$apollo.query({
+      query: GET_ALL_WORDS,
+      variables: { limit: 50 },
+    });
+
+    console.log('allWords', allWords.data.getWords.words);
   },
 };
 </script>

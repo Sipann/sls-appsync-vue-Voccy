@@ -1,13 +1,17 @@
 <template>
   <v-container>
-    <v-list-item v-for="word in words" :key="word.ItemId">
+    <v-btn v-if="paginated.nextToken" @click="showMore">Next</v-btn>
+
+    <v-list-item v-for="word in paginated.words" :key="word.ItemId">
       <v-list-item-content>
         <delete-word :format="format" :word="word" />
         <word-form action="editing" :format="format" :word="word" />
         <v-list-item-title>{{ word.english }}</v-list-item-title>
         <v-list-item-title>{{ word.french }}</v-list-item-title>
       </v-list-item-content>
-    </v-list-item>  
+    </v-list-item> 
+    
+    <p> {{paginated.nextToken}}</p> 
   </v-container>
 </template>
 
@@ -23,13 +27,33 @@ export default {
 
   data: () => ({
     format: 'round',
+    paginated: {
+      words: [],
+      nextToken: '',
+    },
   }),
 
-  apollo: {
-    words: {
-      query: () => GET_WORDS,
-      update: data => data.getWords.words,
+  
+  methods: {
+
+    async showMore() {
+      try {
+        this.$apollo.queries.paginated.refetch({
+          nextToken: this.paginated.nextToken,
+        });
+      } catch (err) {
+        console.log('showMore err', err);
+      }
     },
+    
+  },
+
+  apollo: {
+    paginated: {
+      query: () => GET_WORDS,
+      variables: { limit: 10 },
+      update: data => data.getWords,
+    }
   },
   
 }
