@@ -29,7 +29,6 @@ type PaginatedWords {
 }
 
 type Word {
-  # UserId: String!
   ItemId: String!
   wordId: String!
   english: String
@@ -39,7 +38,6 @@ type Word {
 }
 
 type Category {
-  # UserId: String!
   ItemId: String!
   title: String!
   numbers: Int

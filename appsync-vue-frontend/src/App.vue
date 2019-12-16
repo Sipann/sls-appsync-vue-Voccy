@@ -27,7 +27,7 @@ export default {
 
     const allWords = await this.$apollo.query({
       query: GET_ALL_WORDS,
-      variables: { limit: 50 },
+      variables: { limit: 250 },
     });
 
     console.log('allWords', allWords.data.getWords.words);
