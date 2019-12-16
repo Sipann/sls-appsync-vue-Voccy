@@ -86,6 +86,8 @@ export default {
       if (this.signedIn) {
         items= [
           { icon: 'mdi-account', title: 'Dashboard', link: '/dashboard' },
+          { icon: 'mdi-account', title: 'List', link: '/list' },
+          { icon: 'mdi-settings', title: 'Preferences', link: '/preferences' },
         ];
       } else {
         items = [

@@ -19,7 +19,6 @@
       <card-test v-if="isTesting" 
         :word="words[current]"
         :shorter="shorter"
-        :showLanguageFirst="showLanguageFirst"
         @next="nextQuestion" />
       <v-card v-if="isComplete">
         Test is complete
@@ -57,7 +56,6 @@ export default {
     isSetting: false,
     isTesting: false,
    
-    showLanguageFirst: 'english',
     shorter: { isShorter: false, asked: null, found: null},
     words: []
   }),
@@ -86,10 +84,12 @@ export default {
     },
 
     reset() {
+      this.current = 0;
       this.dialog = this.isEmpty = this.isSetting = this.isTesting = this.isComplete = this.shorter = false;
     },
 
     startTest() {
+      this.current = 0;
       this.isSetting = this.dialog = true;
     },
 

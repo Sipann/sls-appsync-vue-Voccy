@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Dashboard from '@/views/Dashboard.vue'
 import ListWords from '@/views/ListWords.vue'
+import UserPreferences from '@/views/UserPreferences.vue'
 
 
 Vue.use(VueRouter)
@@ -55,6 +56,12 @@ const routes = [
     name: 'list',
     component: ListWords,
     meta: { requiresAuth: true, unAuthenticatedOnly: false },
+  },
+  {
+    path: '/preferences',
+    name: 'preferences',
+    component: UserPreferences,
+    meta: { requiresAuth: true, unAuthenticatedOnly: false }, 
   },
   
 ]

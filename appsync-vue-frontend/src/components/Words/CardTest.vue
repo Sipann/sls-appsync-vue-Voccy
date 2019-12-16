@@ -1,14 +1,14 @@
 <template>
   <v-card>
-    <v-banner single-line v-if="shorter && showBanner">You asked for {{ shorter.asked }} words but only {{ shorter.found }} match your criteria.
+    <v-banner single-line v-if="shorter.isShorter && showBanner">You asked for {{ shorter.asked }} words but only {{ shorter.found }} match your criteria.
       <template v-slot:actions>
         <v-btn text @click="show = false">OK</v-btn>
       </template>
     </v-banner>
-    <p>{{ showLanguageFirst }}: {{ word[showLanguageFirst] }}</p>
+    <p>{{ languageFirst }}: {{ word[languageFirst] }}</p>
     <div v-if="showAnswer">
       <word-form action="editing" format="round" :word="word" />
-      <p>{{ answerLanguage }}: {{ word[answerLanguage] }}</p>
+      <p>{{ languageAnswer }}: {{ word[languageAnswer] }}</p>
       <p>{{ word.category }}</p>
       <p>{{ word.tag }}</p>
     </div>
@@ -43,13 +43,20 @@ export default {
     return {
       showAnswer: false,
       showBanner: true,
+      languageFirst: 'english',
     }
   },
 
   computed: {
-    answerLanguage() {
-      return 'french';
+    languageAnswer() {
+      return this.languageFirst === 'english' ? 'french' : 'english';
     },
+  },
+
+  mounted() {
+    if (localStorage.getItem('voccy-languageFirst')) {
+      this.languageFirst = localStorage.getItem('voccy-languageFirst');
+    }
   },
 
   methods: {
